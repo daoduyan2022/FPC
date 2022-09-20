@@ -3,29 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using Protocol;
 
 namespace MotionToolFPC
 {
     public class ScanPLC
     {
-        private static ScanPLC plc = null;
         iQF fx5u = new iQF();
         public bool IsRead = true;
         public bool EnableScanPLC = true;
         public bool IsError = false;
         public List<dataSend> dataSends = new List<dataSend>();
         private Globals globals = Globals.GetInstance();
-
-
-        public static ScanPLC GetInstance()
-        {
-            if(plc == null)
-            {
-                plc = new ScanPLC();
-            }
-            return plc;
-        }
+        private System.Timers.Timer mTimer = new System.Timers.Timer(100);
         public bool ConnectPLC(string IpAddress, int port)
         {
             try
@@ -36,6 +27,7 @@ namespace MotionToolFPC
             {
                 IsError = true;
             }
+            
             return IsError;
         }
         public void DisconnectPLC(string IpAddress, int port)
@@ -44,29 +36,29 @@ namespace MotionToolFPC
         }
         public void StartScan()
         {
-            while (true)
+            mTimer.Enabled = true;
+            mTimer.Elapsed += Scan;
+        }
+        private void Scan(object sender, ElapsedEventArgs e)
+        {
+
+            mTimer.Enabled = false;
+            Console.WriteLine("============================ running ==============================");
+            try
             {
                 if (!EnableScanPLC)
                 {
-                    break;
+                    mTimer.Enabled = false;
                 }
 
                 if (IsRead)
                 {
-                    try
-                    {
-                        globals.D0D499 = fx5u.ReadHoldingRegister(0, 500);
-                        globals.D500D999 = fx5u.ReadHoldingRegister(500, 500);
-                    }
-                    catch
-                    {
-                        IsError = true;
-                    }
-                    
+                    globals.D0D499 = fx5u.ReadHoldingRegister(0, 500);
+                    globals.D500D999 = fx5u.ReadHoldingRegister(500, 500);
                 }
                 else
                 {
-                    foreach(dataSend s in dataSends)
+                    foreach (dataSend s in dataSends)
                     {
                         try
                         {
@@ -74,14 +66,18 @@ namespace MotionToolFPC
                         }
                         catch
                         {
-                            IsError = true;
                             break;
                         }
                     }
                     IsRead = true;
                     dataSends.Clear();
                 }
-            }        
+            }
+            catch
+            {
+                IsError=true;
+            }
+            mTimer.Enabled = true;
         }
     }
 

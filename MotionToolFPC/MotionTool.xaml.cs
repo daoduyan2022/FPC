@@ -16,6 +16,7 @@ using Protocol;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Timers;
+using System.Threading;
 
 namespace MotionToolFPC
 {
@@ -25,14 +26,13 @@ namespace MotionToolFPC
     public partial class MotionTool : UserControl, INotifyPropertyChanged
     {
         private System.Timers.Timer TimerUpdateUI = new System.Timers.Timer(10);
-        public Globals globals { get; set; } = null;
+        public Globals globals { get; set; }
         public ObservableCollection<Parameter> Parameters { get; set; }
         public ObservableCollection<DataPoint> DataPoints { get; set; }
 
-        public ScanPLC PLC = null;
-
         public event PropertyChangedEventHandler PropertyChanged;
         public SolidColorBrush StatusConnect { get; set; } = Brushes.Red;
+
         public void OnPropertyChanged(string Name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Name));
@@ -86,29 +86,29 @@ namespace MotionToolFPC
             WaittingWindow waittingWindow = new WaittingWindow();
             waittingWindow.ShowDialog();
             globals = Globals.GetInstance();
-            PLC = ScanPLC.GetInstance();
             InitParameters();
             InitDataPoints();
             InitializeComponent();
             TimerUpdateUI.Elapsed += OntimedEvent;
             TimerUpdateUI.Enabled = true;
             this.DataContext = this;
+            OnPropertyChanged();
         }
 
         private void OntimedEvent(object sender, ElapsedEventArgs e)
         {
-            TimerUpdateUI.Enabled = false;
-            if(globals.D0D499[499] == 1)
-            {
-                StatusConnect = Brushes.Green;
-            }
-            else
-            {
-                StatusConnect = Brushes.Red;
-            }
-            TimerUpdateUI.Enabled = true;
+            //TimerUpdateUI.Enabled = false;
+            //if(globals.D0D499[499] == 1)
+            //{
+            //    StatusConnect = Brushes.Green;
+            //}
+            //else
+            //{
+            //    StatusConnect = Brushes.Red;
+            //}
+            //TimerUpdateUI.Enabled = true;
 
-            OnPropertyChanged();
+            //OnPropertyChanged();
         }
 
         public void InitParameters()
@@ -118,23 +118,37 @@ namespace MotionToolFPC
                 Parameters.Clear();
             }
             string[] Axis = { "X1", "X2", "Y", "R" };
+            object newob = new object();
             Parameters = new ObservableCollection<Parameter>();
-            for(int i=0; i<4; i++)
+            lock (newob)
             {
-                Parameters.Add(new Parameter(Axis[i], globals.Parameter[i], globals.Parameter[i+4],globals.Parameter[i+8],globals.Parameter[i+12],globals.Parameter[i+16],globals.Parameter[i+20], globals.Parameter[i+24]));
+                for (int i = 0; i < 4; i++)
+                {
+                    Parameters.Add(new Parameter(Axis[i], globals.Parameter[i], globals.Parameter[i + 4], globals.Parameter[i + 8], globals.Parameter[i + 12], globals.Parameter[i + 16], globals.Parameter[i + 20], globals.Parameter[i + 24]));
+                }
             }
+            
         }
         public void InitDataPoints()
         {
+            // a clear song khoi tao lai thi tra lag
+            // a refesh là dc k can clear r khoi tao lai dau
             if (DataPoints != null)
             {
                 DataPoints.Clear();
             }
             DataPoints = new ObservableCollection<DataPoint>();
-            for(int i=0; i<globals.DataPointX1.Length; i++)
+            object newob = new object();
+            lock (newob)
             {
-                DataPoints.Add(new DataPoint(i+1, globals.DataPointX1[i], globals.DataPointX2[i], globals.DataPointY[i], globals.DataPointR[i], globals.DataSpeedX1[i], globals.DataSpeedX2[i], globals.DataSpeedY[i], globals.DataSpeedR[i]));
+                for (int i = 0; i < globals.DataPointX1.Length; i++)
+                {
+                    DataPoints.Add(new DataPoint(i + 1, globals.DataPointX1[i], globals.DataPointX2[i], globals.DataPointY[i], globals.DataPointR[i], globals.DataSpeedX1[i], globals.DataSpeedX2[i], globals.DataSpeedY[i], globals.DataSpeedR[i]));
+                }
             }
+            //dgvDataPoint.Items.Refresh();
+
+
         }
 
         private void dgvParameter_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -157,41 +171,41 @@ namespace MotionToolFPC
 
         private void PauseHome_Click(object sender, RoutedEventArgs e)
         {
-            if (globals.D0D499[48] == 0)
-            {
-                PLC.dataSends.Add(new dataSend(new int[] { 1 }, 48));
-                PLC.IsRead = false;
-            }
-            else
-            {
-                PLC.dataSends.Add(new dataSend(new int[] { 0 }, 48));
-                PLC.IsRead = false;
-            }
+            //if (globals.D0D499[48] == 0)
+            //{
+            //    PLC.dataSends.Add(new dataSend(new int[] { 1 }, 48));
+            //    PLC.IsRead = false;
+            //}
+            //else
+            //{
+            //    PLC.dataSends.Add(new dataSend(new int[] { 0 }, 48));
+            //    PLC.IsRead = false;
+            //}
             
         }
 
         private void HomeAll_Click(object sender, RoutedEventArgs e)
         {
-            PLC.dataSends.Add(new dataSend(new int[] { 1 }, 0));
-            PLC.IsRead = false;
+            //PLC.dataSends.Add(new dataSend(new int[] { 1 }, 0));
+            //PLC.IsRead = false;
         }
 
         private void HomeX1X2_Click(object sender, RoutedEventArgs e)
         {
-            PLC.dataSends.Add(new dataSend(new int[] { 1 }, 2));
-            PLC.IsRead = false;
+            //PLC.dataSends.Add(new dataSend(new int[] { 1 }, 2));
+            //PLC.IsRead = false;
         }
 
         private void HomeY_Click(object sender, RoutedEventArgs e)
         {
-            PLC.dataSends.Add(new dataSend(new int[] { 1 }, 3));
-            PLC.IsRead = false;
+            //PLC.dataSends.Add(new dataSend(new int[] { 1 }, 3));
+            //PLC.IsRead = false;
         }
 
         private void HomeR_Click(object sender, RoutedEventArgs e)
         {
-            PLC.dataSends.Add(new dataSend(new int[] { 1 }, 1));
-            PLC.IsRead = false;
+            //PLC.dataSends.Add(new dataSend(new int[] { 1 }, 1));
+            //PLC.IsRead = false;
         }
 
         private void btnExcuteOffsetX1_Click(object sender, RoutedEventArgs e)

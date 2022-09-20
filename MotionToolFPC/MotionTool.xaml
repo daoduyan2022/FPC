@@ -214,17 +214,17 @@
                                 <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
-                                <DataGrid Name="dgvDataPoint" AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" ItemsSource="{Binding DataPoints}" IsReadOnly="True" CanUserSortColumns="False">
+                                <DataGrid Name="dgvDataPoint" AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" ItemsSource="{Binding globals}" IsReadOnly="True" CanUserSortColumns="False">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="0.5*" />
-                                        <DataGridTextColumn Header="Coordinate X1" Binding="{Binding Coordinate_X1}"  Width="1*"/>
-                                        <DataGridTextColumn Header="Coordinate X2" Binding="{Binding Coordinate_X2}" Width="1*" />
-                                        <DataGridTextColumn Header="Coordinate Y" Binding="{Binding Coordinate_Y}" Width="1*"/>
-                                        <DataGridTextColumn Header="Coordinate R" Binding="{Binding Coordinate_R}" Width="1*"/>
-                                        <DataGridTextColumn Header="Speed X1" Binding="{Binding Speed_X1}" Width="1*"/>
-                                        <DataGridTextColumn Header="Speed X2" Binding="{Binding Speed_X2}" Width="1*"/>
-                                        <DataGridTextColumn Header="Speed Y" Binding="{Binding Speed_Y}" Width="1*"/>
-                                        <DataGridTextColumn Header="Speed R" Binding="{Binding Speed_R}" Width="1*"/>
+                                        <!--<DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="0.5*" />-->
+                                        <DataGridTextColumn Header="Coordinate X1" Binding="{Binding OffsetX1}"  Width="1*"/>
+                                        <DataGridTextColumn Header="Coordinate X2" Binding="{Binding DataPointX2}" Width="1*" />
+                                        <DataGridTextColumn Header="Coordinate Y" Binding="{Binding DataPointY}" Width="1*"/>
+                                        <DataGridTextColumn Header="Coordinate R" Binding="{Binding DataPointR}" Width="1*"/>
+                                        <DataGridTextColumn Header="Speed X1" Binding="{Binding DataSpeedX1}" Width="1*"/>
+                                        <DataGridTextColumn Header="Speed X2" Binding="{Binding DataSpeedX2}" Width="1*"/>
+                                        <DataGridTextColumn Header="Speed Y" Binding="{Binding DataSpeedY}" Width="1*"/>
+                                        <DataGridTextColumn Header="Speed R" Binding="{Binding DataSpeedR}" Width="1*"/>
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>

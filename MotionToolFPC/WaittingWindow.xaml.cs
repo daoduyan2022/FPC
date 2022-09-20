@@ -24,9 +24,8 @@ namespace MotionToolFPC
         string[] order = new string[] { "Load File Config", "Load File Model", "Connect to PLC", "Start Scan PLC", "Ending" };
         bool Kill = false;
         private System.Timers.Timer mTimer = new System.Timers.Timer(1000);
-        ScanPLC scanPLC = ScanPLC.GetInstance();
         Globals globals = Globals.GetInstance();
-
+        
         public WaittingWindow()
         {
             InitializeComponent();
@@ -61,14 +60,22 @@ namespace MotionToolFPC
                 }
                 if (i == 2)
                 {
-                    scanPLC.ConnectPLC("192.168.3.3", 9000);
+                    //Thread PLCScaner = new Thread(() =>
+                    //{
+                    ScanPLC PLC = new ScanPLC();
+                    PLC.ConnectPLC("192.168.3.3", 9000);
+                    //PLC.StartScan();
+                    //});
+                    //PLCScaner.IsBackground = true;
+                    //Thread.Sleep(50);
+                    //PLCScaner.Start();
+
                 }
-                if (i == 3 && scanPLC.IsError == false)
+                if (i == 3)
                 {
-                    Thread PLCScaner = new Thread(new ThreadStart(scanPLC.StartScan));
-                    PLCScaner.IsBackground = true;
-                    PLCScaner.Start();
+
                 }
+                    
                 if (i == 4)
                 {
                     
